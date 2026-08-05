@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>問い合わせフォーム</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- テーヘム全体のスタイル -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f9fa; /* 背景色 */
+    }
+
+
+    .contact-form-container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #fff; /* 背景色 */
+      padding: 20px;
+      border-radius: 5px; /* 角丸 */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 影響 */
+    }
+
+
+    h1 {
+      margin-bottom: 20px;
+      text-align: center; /* 文字の配置 */
+    }
+
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+
+    .input-group {
+      position: relative; /* 囲む要素の位置 */
+    }
+
+
+    label {
+      display: block; /* ラベルがブロック要素として使用 */
+      margin-bottom: 5px;
+      color: #7f8c8d; /* 文字色 */
+    }
+
+
+    input {
+      width: 100%;
+      padding: 10px; /* パディング */
+      border: 1px solid #ccc; /* 列挙線色 */
+      border-radius: 4px; /* 角丸 */
+    }
+
+
+    input.required {
+      color: red; /* 練習のため赤い色で表示 */
+    }
+
+
+    button {
+      width: 100%; /* ボタンの横幅 */
+      padding: 10px;
+      background-color: #3498db; /* 背景色 */
+      color: #fff; /* 文字色 */
+      border: none; /* ボーダーなし */
+      border-radius: 4px; /* 角丸 */
+      cursor: pointer; /* クリック可能にする */
+    }
+
+
+    button:hover {
+      background-color: #2980b9; /* ハイパーリンクボタンの背景色 */
+    }
+  </style>
+
+
+  <section class="contact-form-container">
+    <!-- テーヘムのタイトル -->
+    <h1>お問い合わせフォーム</h1>
+
+
+    <!-- 入力フォーム -->
+    <form action="/submit-form" method="post">
+      <div class="input-group">
+        <!-- テーヘムのラベル -->
+        <label for="name">問い合わせ内容</label>
+        <!-- テーヘムの入力フィールド -->
+        <input type="text" id="name" name="name" required>
+      </div>
+
+
+      <div class="input-group">
+        <!-- テーヘムのラベル -->
+        <label for="email">メールアドレス</label>
+        <!-- テーヘムの入力フィールド -->
+        <input type="text" id="email" name="email" required>
+      </div>
+
+
+      <!-- テーヘムの送信ボタン -->
+      <button type="submit">送信</button>
+    </form>
+
+
+    <!-- テーヘムの説明 -->
+    <div class="message-container">
+      <p>必須項目に入力しないと送れない設定としています。</p>
+    </div>
+  </section>
+
+
+</body>
+</html>
