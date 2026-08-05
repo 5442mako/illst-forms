@@ -11,8 +11,8 @@
   <section class="contact-form-container">
     <h1>お問い合わせフォーム</h1>
 
-    <form action="/submit-form" method="post">
-      <!-- 問い合わせ内容（10行初期表示＆自動伸長） -->
+    <form id="contactForm">
+      <!-- 問い合わせ内容（初期10行・自動伸縮） -->
       <div class="input-group">
         <label for="content">
           問い合わせ内容
@@ -41,21 +41,72 @@
       </div>
 
       <!-- 送信ボタン -->
-      <button type="submit">送信</button>
+      <button type="submit" id="submitBtn">送信</button>
     </form>
 
     <div class="message-container">
-      <p>※必須項目に入力しないと送信できません。</p>
+      <p id="formStatus">※必須項目に入力しないと送信できません。</p>
     </div>
   </section>
 
-  <!-- 入力欄が自動で伸びるJavaScript -->
   <script>
+    // 1. テキストエリアの自動伸び縮み制御
     const textarea = document.getElementById('content');
-
     textarea.addEventListener('input', function () {
       this.style.height = 'auto';
       this.style.height = this.scrollHeight + 'px';
+    });
+
+    // 2. Google Apps Script（GAS）への送信処理
+    const form = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formStatus = document.getElementById('formStatus');
+
+    // ★GASを登録・デプロイしたら、発行されたURLを「""」の中に貼り付けてください
+    const GAS_URL = "ここにGASのウェブアプリURLを貼り付け";
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault(); // ページの再読み込みを防止
+
+      // URL未設定の場合のアラート（テスト時の押し間違え防止）
+      if (GAS_URL === "https://script.google.com/macros/s/AKfycbw2LM-LmMzYRY0SBGEb2rDcVuI4bpPHoRpFn3fQ23GDNAn4MreJlzJLvTxX43qCdAMd1Q/exec" || !GAS_URL) {
+        alert("GASのURLが設定されていません。コード内の GAS_URL を書き換えてください。");
+        return;
+      }
+
+      // 送信中のボタン無効化
+      submitBtn.disabled = true;
+      submitBtn.innerText = "送信中...";
+
+      const payload = {
+        email: document.getElementById('email').value,
+        content: document.getElementById('content').value
+      };
+
+      fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors', // CORSエラーを回避して送信するための設定
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        // 送信成功時のメッセージ表示
+        formStatus.style.color = "#27ae60";
+        formStatus.innerText = "送信が完了しました！ありがとうございました。";
+        form.reset(); // フォームのリセット
+        textarea.style.height = 'auto'; // 入力枠の高さを初期化
+        submitBtn.innerText = "送信";
+        submitBtn.disabled = false;
+      })
+      .catch(error => {
+        // 送信失敗時のメッセージ表示
+        formStatus.style.color = "#e74c3c";
+        formStatus.innerText = "送信に失敗しました。時間をおいて再度お試しください。";
+        submitBtn.innerText = "送信";
+        submitBtn.disabled = false;
+      });
     });
   </script>
 
