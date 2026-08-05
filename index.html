@@ -144,7 +144,7 @@
     const resetBtn = document.getElementById('resetBtn');
 
     // ★発行されたGASのURL（半角ダブルクォーテーション "" の間に貼り付けてください）
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbw2LM-LmMzYRY0SBGEb2rDcVuI4bpPHoRpFn3fQ23GDNAn4MreJlzJLvTxX43qCdAMd1Q/exec";
+    const GAS_URL = "ここにGASのウェブアプリURLを貼り付け";
 
     // 最後に送信した時間を記録する変数（連続送信対策）
     let lastSubmitTime = 0;
@@ -177,7 +177,7 @@
       }
 
       // URL未設定チェック
-      if (GAS_URL === "ここにGASのウェブアプリURLを貼り付け" || !GAS_URL) {
+      if (GAS_URL === "https://script.google.com/macros/s/AKfycbw2LM-LmMzYRY0SBGEb2rDcVuI4bpPHoRpFn3fQ23GDNAn4MreJlzJLvTxX43qCdAMd1Q/exec" || !GAS_URL) {
         alert("GASのURLが設定されていません。コード内の GAS_URL を書き換えてください。");
         return;
       }
