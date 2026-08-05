@@ -6,13 +6,12 @@
   <title>お問い合わせフォーム</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* 追加のCSS: 送信完了メッセージとハニーポット用 */
+    /* 送信完了カードおよびスパム対策用のスタイル */
     
     /* ロボット（スパムbot）用の隠しフィールド */
     .hp-field {
       display: none !important;
     }
-  
 
     /* 送信完了カードのデザイン */
     .success-card {
@@ -144,8 +143,8 @@
     const messageContainer = document.getElementById('messageContainer');
     const resetBtn = document.getElementById('resetBtn');
 
-    // ★ご自身のGAS URLを貼り付けてください
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbw2LM-LmMzYRY0SBGEb2rDcVuI4bpPHoRpFn3fQ23GDNAn4MreJlzJLvTxX43qCdAMd1Q/exec";
+    // ★発行されたGASのURL（半角ダブルクォーテーション "" の間に貼り付けてください）
+    const GAS_URL = "ここにGASのウェブアプリURLを貼り付け";
 
     // 最後に送信した時間を記録する変数（連続送信対策）
     let lastSubmitTime = 0;
@@ -153,16 +152,14 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      // 【対策1: スパムロボット対策（ハニーポット）】
-      // 隠しフィールドに値が入っている場合はロボットとみなして処理を中断
+      // 【スパム対策（ハニーポット）】
       const honeypot = document.getElementById('website_hp').value;
       if (honeypot) {
         console.warn("Spam detected.");
         return; 
       }
 
-      // 【対策2: 連続送信（連打）対策】
-      // 前回送信から 5 秒経っていない場合は拒否
+      // 【連続送信（連打）対策】前回送信から 5 秒以内は拒否
       const now = Date.now();
       if (now - lastSubmitTime < 5000) {
         formStatus.style.color = "#e67e22";
@@ -171,12 +168,12 @@
       }
 
       // URL未設定チェック
-      if (GAS_URL === "ここにGASのウェブアプリURLを貼り付け" || !GAS_URL) {
+      if (GAS_URL === "https://script.google.com/macros/s/AKfycbw2LM-LmMzYRY0SBGEb2rDcVuI4bpPHoRpFn3fQ23GDNAn4MreJlzJLvTxX43qCdAMd1Q/exec" || !GAS_URL) {
         alert("GASのURLが設定されていません。コード内の GAS_URL を書き換えてください。");
         return;
       }
 
-      // 送信中処理
+      // ボタンを「送信中...」にして押せないように制御
       submitBtn.disabled = true;
       submitBtn.innerText = "送信中...";
       formStatus.innerText = "";
@@ -186,6 +183,7 @@
         content: document.getElementById('content').value
       };
 
+      // バックグラウンドでGASへ送信実行
       fetch(GAS_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -193,32 +191,29 @@
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
-      })
-      .then(() => {
-        // 送信成功時刻を更新
+      }).catch(error => {
+        console.error("送信エラー:", error);
+      });
+
+      // 3秒（3000ミリ秒）「送信中...」を表示させてから完了画面に切替
+      setTimeout(function() {
         lastSubmitTime = Date.now();
 
-        // フォームを非表示にし、大きく送信完了メッセージを表示
+        // フォームを非表示にし、完了メッセージカードを表示
         form.style.display = 'none';
         messageContainer.style.display = 'none';
         formTitle.style.display = 'none';
         successCard.style.display = 'block';
 
-        // フォームのリセット
+        // フォームリセット
         form.reset();
         textarea.style.height = 'auto';
         submitBtn.innerText = "送信";
         submitBtn.disabled = false;
-      })
-      .catch(error => {
-        formStatus.style.color = "#e74c3c";
-        formStatus.innerText = "送信に失敗しました。時間をおいて再度お試しください。";
-        submitBtn.innerText = "送信";
-        submitBtn.disabled = false;
-      });
+      }, 3000);
     });
 
-    // 「もう一度送信する」ボタンでフォームを再表示
+    // 「もう一度送信する」ボタンを押したときの復帰処理
     resetBtn.addEventListener('click', function() {
       successCard.style.display = 'none';
       form.style.display = 'block';
