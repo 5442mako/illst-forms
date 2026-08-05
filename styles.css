@@ -1,43 +1,37 @@
-﻿body {
+body {
   font-family: Arial, sans-serif; /* フォント */
   margin: 0; /* 上下の余白 */
   padding: 20px; /* 左右の余白 */
   background-color: #f4f9fa; /* 背景色 */
 }
 
-
 .contact-form-container {
-  max-width: 600px; /* テーマの幅 */
+  max-width: 300px; /* 縦幅の設定 */
   margin: auto; /* 中央に配置 */
   background-color: #fff; /* 背景色 */
-  padding: 20px; /* 左右の余白 */
+  padding: 20px;
   border-radius: 5px; /* 角丸 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 影響 */
 }
-
 
 h1 {
   margin-bottom: 20px; /* ヘッダーの下に余白 */
   text-align: center; /* 文字の配置 */
 }
 
-
 .form-group {
   margin-bottom: 20px; /* フォームのグループ間の余白 */
 }
 
-
 .input-group {
   position: relative; /* 围む要素の位置 */
 }
-
 
 label {
   display: block; /* ラベルがブロック要素として使用 */
   margin-bottom: 5px; /* ラベルの下に余白 */
   color: #7f8c8d; /* 文字色 */
 }
-
 
 input {
   width: 100%; /* テーヘムの横幅 */
@@ -46,11 +40,9 @@ input {
   border-radius: 4px; /* 角丸 */
 }
 
-
 input.required {
   color: red; /* 練習のため赤い色で表示 */
 }
-
 
 button {
   width: 100%; /* ボタンの横幅 */
@@ -61,7 +53,6 @@ button {
   border-radius: 4px; /* 角丸 */
   cursor: pointer; /* クリック可能にする */
 }
-
 
 button:hover {
   background-color: #2980b9; /* ハイパーリンクボタンの背景色 */
