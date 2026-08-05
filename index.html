@@ -144,7 +144,7 @@
     const resetBtn = document.getElementById('resetBtn');
 
     // ★発行されたGASのURL（半角ダブルクォーテーション "" の間に貼り付けてください）
-    const GAS_URL = "ここにGASのウェブアプリURLを貼り付け";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbw2LM-LmMzYRY0SBGEb2rDcVuI4bpPHoRpFn3fQ23GDNAn4MreJlzJLvTxX43qCdAMd1Q/exec";
 
     // 最後に送信した時間を記録する変数（連続送信対策）
     let lastSubmitTime = 0;
@@ -159,6 +159,15 @@
         return; 
       }
 
+      // 【メールアドレスの厳密チェック】
+      const emailValue = document.getElementById('email').value;
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(emailValue)) {
+        formStatus.style.color = "#e74c3c";
+        formStatus.innerText = "正しいメールアドレスの形式で入力してください（例: example@example.com）";
+        return;
+      }
+
       // 【連続送信（連打）対策】前回送信から 5 秒以内は拒否
       const now = Date.now();
       if (now - lastSubmitTime < 5000) {
@@ -168,7 +177,7 @@
       }
 
       // URL未設定チェック
-      if (GAS_URL === "https://script.google.com/macros/s/AKfycbw2LM-LmMzYRY0SBGEb2rDcVuI4bpPHoRpFn3fQ23GDNAn4MreJlzJLvTxX43qCdAMd1Q/exec" || !GAS_URL) {
+      if (GAS_URL === "ここにGASのウェブアプリURLを貼り付け" || !GAS_URL) {
         alert("GASのURLが設定されていません。コード内の GAS_URL を書き換えてください。");
         return;
       }
@@ -179,7 +188,7 @@
       formStatus.innerText = "";
 
       const payload = {
-        email: document.getElementById('email').value,
+        email: emailValue,
         content: document.getElementById('content').value
       };
 
