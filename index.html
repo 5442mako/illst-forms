@@ -5,13 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>お問い合わせフォーム</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* 追加のCSS: 送信完了メッセージとハニーポット用 */
+    
+    /* ロボット（スパムbot）用の隠しフィールド */
+    .hp-field {
+      display: none !important;
+    }
+
+    /* 送信完了カードのデザイン */
+    .success-card {
+      display: none; /* 初期状態は非表示 */
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    .success-icon {
+      width: 60px;
+      height: 60px;
+      background-color: #27ae60;
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: bold;
+      margin: 0 auto 20px;
+    }
+
+    .success-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 12px;
+    }
+
+    .success-text {
+      font-size: 14px;
+      color: #666666;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .reset-btn {
+      background-color: transparent;
+      border: 1px solid #3498db;
+      color: #3498db;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .reset-btn:hover {
+      background-color: #3498db;
+      color: #ffffff;
+    }
+  </style>
 </head>
 <body>
 
   <section class="contact-form-container">
-    <h1>お問い合わせフォーム</h1>
+    <h1 id="formTitle">お問い合わせフォーム</h1>
 
+    <!-- お問い合わせフォーム -->
     <form id="contactForm">
+      
+      <!-- スパム対策（ハニーポット）：人間には見えないダミー欄 -->
+      <div class="hp-field">
+        <input type="text" id="website_hp" name="website_hp" tabindex="-1" autocomplete="off">
+      </div>
+
       <!-- 問い合わせ内容（初期10行・自動伸縮） -->
       <div class="input-group">
         <label for="content">
@@ -44,39 +110,75 @@
       <button type="submit" id="submitBtn">送信</button>
     </form>
 
-    <div class="message-container">
+    <!-- 送信完了時に表示される画面 -->
+    <div id="successCard" class="success-card">
+      <div class="success-icon">✓</div>
+      <div class="success-title">送信が完了しました</div>
+      <p class="success-text">
+        お問い合わせありがとうございます。<br>
+        内容を確認のうえ、担当者よりご連絡いたします。
+      </p>
+      <button type="button" class="reset-btn" id="resetBtn">もう一度送信する</button>
+    </div>
+
+    <div class="message-container" id="messageContainer">
       <p id="formStatus">※必須項目に入力しないと送信できません。</p>
     </div>
   </section>
 
   <script>
-    // 1. テキストエリアの自動伸び縮み制御
+    // 1. テキストエリアの自動伸縮
     const textarea = document.getElementById('content');
     textarea.addEventListener('input', function () {
       this.style.height = 'auto';
       this.style.height = this.scrollHeight + 'px';
     });
 
-    // 2. Google Apps Script（GAS）への送信処理
+    // 2. 要素の取得
     const form = document.getElementById('contactForm');
     const submitBtn = document.getElementById('submitBtn');
     const formStatus = document.getElementById('formStatus');
+    const successCard = document.getElementById('successCard');
+    const formTitle = document.getElementById('formTitle');
+    const messageContainer = document.getElementById('messageContainer');
+    const resetBtn = document.getElementById('resetBtn');
 
-    // ★GASを登録・デプロイしたら、発行されたURLを「""」の中に貼り付けてください
-    const GAS_URL = "ここにGASのウェブアプリURLを貼り付け";
+    // ★ご自身のGAS URLを貼り付けてください
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbw2LM-LmMzYRY0SBGEb2rDcVuI4bpPHoRpFn3fQ23GDNAn4MreJlzJLvTxX43qCdAMd1Q/exec";
+
+    // 最後に送信した時間を記録する変数（連続送信対策）
+    let lastSubmitTime = 0;
 
     form.addEventListener('submit', function (e) {
-      e.preventDefault(); // ページの再読み込みを防止
+      e.preventDefault();
 
-      // URL未設定の場合のアラート（テスト時の押し間違え防止）
-      if (GAS_URL === "https://script.google.com/macros/s/AKfycbw2LM-LmMzYRY0SBGEb2rDcVuI4bpPHoRpFn3fQ23GDNAn4MreJlzJLvTxX43qCdAMd1Q/exec" || !GAS_URL) {
+      // 【対策1: スパムロボット対策（ハニーポット）】
+      // 隠しフィールドに値が入っている場合はロボットとみなして処理を中断
+      const honeypot = document.getElementById('website_hp').value;
+      if (honeypot) {
+        console.warn("Spam detected.");
+        return; 
+      }
+
+      // 【対策2: 連続送信（連打）対策】
+      // 前回送信から 5 秒経っていない場合は拒否
+      const now = Date.now();
+      if (now - lastSubmitTime < 5000) {
+        formStatus.style.color = "#e67e22";
+        formStatus.innerText = "連続送信はできません。少し時間を置いてお試しください。";
+        return;
+      }
+
+      // URL未設定チェック
+      if (GAS_URL === "ここにGASのウェブアプリURLを貼り付け" || !GAS_URL) {
         alert("GASのURLが設定されていません。コード内の GAS_URL を書き換えてください。");
         return;
       }
 
-      // 送信中のボタン無効化
+      // 送信中処理
       submitBtn.disabled = true;
       submitBtn.innerText = "送信中...";
+      formStatus.innerText = "";
 
       const payload = {
         email: document.getElementById('email').value,
@@ -85,28 +187,44 @@
 
       fetch(GAS_URL, {
         method: 'POST',
-        mode: 'no-cors', // CORSエラーを回避して送信するための設定
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       })
       .then(() => {
-        // 送信成功時のメッセージ表示
-        formStatus.style.color = "#27ae60";
-        formStatus.innerText = "送信が完了しました！ありがとうございました。";
-        form.reset(); // フォームのリセット
-        textarea.style.height = 'auto'; // 入力枠の高さを初期化
+        // 送信成功時刻を更新
+        lastSubmitTime = Date.now();
+
+        // フォームを非表示にし、大きく送信完了メッセージを表示
+        form.style.display = 'none';
+        messageContainer.style.display = 'none';
+        formTitle.style.display = 'none';
+        successCard.style.display = 'block';
+
+        // フォームのリセット
+        form.reset();
+        textarea.style.height = 'auto';
         submitBtn.innerText = "送信";
         submitBtn.disabled = false;
       })
       .catch(error => {
-        // 送信失敗時のメッセージ表示
         formStatus.style.color = "#e74c3c";
         formStatus.innerText = "送信に失敗しました。時間をおいて再度お試しください。";
         submitBtn.innerText = "送信";
         submitBtn.disabled = false;
       });
+    });
+
+    // 「もう一度送信する」ボタンでフォームを再表示
+    resetBtn.addEventListener('click', function() {
+      successCard.style.display = 'none';
+      form.style.display = 'block';
+      messageContainer.style.display = 'block';
+      formTitle.style.display = 'block';
+      formStatus.style.color = "";
+      formStatus.innerText = "※必須項目に入力しないと送信できません。";
     });
   </script>
 
