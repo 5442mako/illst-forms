@@ -4,122 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>お問い合わせフォーム</title>
-  <style>
-    /* 全体設定・レスポンシブ化 */
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Arial, "Helvetica Neue", sans-serif;
-      margin: 0;
-      padding: 20px 10px;
-      background-color: #f4f9fa;
-    }
-
-    .contact-form-container {
-      max-width: 600px;
-      width: 100%;
-      margin: 0 auto;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-      margin-top: 0;
-      margin-bottom: 20px;
-      text-align: center;
-      font-size: 1.5rem;
-      color: #333;
-    }
-
-    .input-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-      color: #333;
-      font-weight: bold;
-    }
-
-    /* 「必須」テキストの赤文字設定 */
-    .required-text {
-      color: #e74c3c;
-      font-size: 0.85rem;
-      font-weight: bold;
-    }
-
-    /* 一行入力ボックス（メールアドレス） */
-    input[type="email"],
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-
-    /* 複数行入力エリア（問い合わせ内容：最初は10行・自動伸縮） */
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 1rem;
-      font-family: inherit;
-      resize: none; /* 手動でのサイズ変更ハンドルを非表示 */
-      overflow-y: hidden; /* スクロールバーを隠して自動伸長 */
-      line-height: 1.5;
-    }
-
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: #3498db;
-      box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
-    }
-
-    /* ボタンデザイン */
-    button {
-      width: 100%;
-      padding: 14px;
-      background-color: #3498db;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    button:hover {
-      background-color: #2980b9;
-    }
-
-    /* 注意書きメッセージ */
-    .message-container {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 0.85rem;
-      color: #7f8c8d;
-    }
-
-    /* スマホ向けメディアクエリ（画面幅が狭い場合の調整） */
-    @media (max-width: 480px) {
-      .contact-form-container {
-        padding: 15px;
-      }
-      h1 {
-        font-size: 1.25rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -164,14 +49,12 @@
     </div>
   </section>
 
-  <!-- textareaの自動伸び縮み制御スクリプト -->
+  <!-- 入力欄が自動で伸びるJavaScript -->
   <script>
     const textarea = document.getElementById('content');
 
     textarea.addEventListener('input', function () {
-      // 一度高さをリセットして正確なscrollHeightを取得
       this.style.height = 'auto';
-      // 入力内容の高さに合わせて自動調整
       this.style.height = this.scrollHeight + 'px';
     });
   </script>
