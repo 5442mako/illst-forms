@@ -64,11 +64,12 @@
       color: #ffffff;
     }
 
-#formStatus {
+    /* ステータスメッセージの文字サイズとカラー設定 */
+    #formStatus {
       font-size: 17px !important;
       font-weight: bold;
       line-height: 1.5;
-      color: #e74c3c; /* ★最初から赤文字（赤系カラー）にする */
+      color: #e74c3c; /* 最初から赤文字にする */
     }
   </style>
 </head>
@@ -150,8 +151,8 @@
     const messageContainer = document.getElementById('messageContainer');
     const resetBtn = document.getElementById('resetBtn');
 
-    // ★発行されたGASのURL（半角ダブルクォーテーション "" の間に貼り付けてください）
-    const GAS_URL = "ここにGASのウェブアプリURLを貼り付け";
+    // ★お使いのGASウェブアプリURLを設定
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbw2LM-LmMzYRY0SBGEb2rDcVuI4bpPHoRpFn3fQ23GDNAn4MreJlzJLvTxX43qCdAMd1Q/exec";
 
     // 最後に送信した時間を記録する変数（連続送信対策）
     let lastSubmitTime = 0;
@@ -183,9 +184,9 @@
         return;
       }
 
-      // URL未設定チェック
-      if (GAS_URL === "https://script.google.com/macros/s/AKfycbw2LM-LmMzYRY0SBGEb2rDcVuI4bpPHoRpFn3fQ23GDNAn4MreJlzJLvTxX43qCdAMd1Q/exec" || !GAS_URL) {
-        alert("GASのURLが設定されていません。コード内の GAS_URL を書き換えてください。");
+      // URL空欄チェック
+      if (!GAS_URL || GAS_URL.trim() === "") {
+        alert("GASのURLが設定されていません。");
         return;
       }
 
@@ -235,7 +236,7 @@
       form.style.display = 'block';
       messageContainer.style.display = 'block';
       formTitle.style.display = 'block';
-      formStatus.style.color = "";
+      formStatus.style.color = "#e74c3c";
       formStatus.innerText = "※必須項目に入力しないと送信できません。";
     });
   </script>
