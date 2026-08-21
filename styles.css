@@ -125,7 +125,7 @@ button:hover {
 
 .header-image {
   width: 100%;
-  height: 500%;             /* 元画像の高さを3倍に引き伸ばす */
+  height: 300%;             /* 元画像の高さを3倍に引き伸ばす */
   object-fit: cover;        /* 枠に合わせてトリミング */
   object-position: top;     /* 画像の上側を基準にして表示 */
   display: block;
