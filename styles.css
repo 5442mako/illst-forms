@@ -117,7 +117,7 @@ button:hover {
 /* ヘッダー画像の設定 */
 .header-image-wrapper {
   width: 100%;
-  aspect-ratio: 3 / 1;      /* 横3 : 縦1 のアスペクト比を設定 */
+  aspect-ratio: 6 / 1;      /* 横3 : 縦1 のアスペクト比を設定 */
   overflow: hidden;         /* はみ出た下部2/3を切り取る */
   border-radius: 6px;       /* 角を少し丸く調整 */
   margin-bottom: 20px;      /* 見出しとの余白 */
