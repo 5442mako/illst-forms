@@ -112,3 +112,20 @@ button:hover {
     font-size: 1.25rem;
   }
 }
+
+/* ヘッダー画像の設定 */
+.header-image-wrapper {
+  width: 100%;
+  aspect-ratio: 3 / 1;      /* 横3 : 縦1 のアスペクト比を設定 */
+  overflow: hidden;         /* はみ出た下部2/3を切り取る */
+  border-radius: 6px;       /* 角を少し丸く調整 */
+  margin-bottom: 20px;      /* 見出しとの余白 */
+}
+
+.header-image {
+  width: 100%;
+  height: 300%;             /* 元画像の高さを3倍に引き伸ばす */
+  object-fit: cover;        /* 枠に合わせてトリミング */
+  object-position: top;     /* 画像の上側を基準にして表示 */
+  display: block;
+}
