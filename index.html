@@ -186,13 +186,30 @@
       }
 
       // 【メールアドレスの厳密チェック】
-      const emailValue = document.getElementById('email').value;
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if (!emailRegex.test(emailValue)) {
-        formStatus.style.color = "#e74c3c";
-        formStatus.innerText = "正しいメールアドレスの形式で入力してください（例: example@example.com）";
-        return;
-      }
+        const emailValue = document.getElementById('email').value.trim();
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        
+        if (!emailRegex.test(emailValue)) {
+          formStatus.style.color = '#e74c3c';
+          formStatus.innerText =
+            '正しいメールアドレスの形式で入力してください（例: example@example.com）';
+          return;
+        }
+        
+        const payload = {
+          name: document.getElementById('name').value.trim(),
+          email: emailValue,
+          content: document.getElementById('content').value.trim()
+        };
+        
+        fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify(payload)
+        }).catch(error => {
+          console.error('送信エラー:', error);
+        });
+
 
       // 【連続送信（連打）対策】前回送信から 5 秒以内は拒否
       const now = Date.now();
@@ -222,15 +239,13 @@
 
       // バックグラウンドでGASへ送信実行
       fetch(GAS_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      }).catch(error => {
-        console.error("送信エラー:", error);
-      });
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify(payload)
+        }).catch(error => {
+          console.error('送信エラー:', error);
+        });
+
 
       // 3秒（3000ミリ秒）「送信中...」を表示させてから完了画面に切替
       setTimeout(function() {
