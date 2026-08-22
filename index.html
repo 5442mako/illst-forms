@@ -176,32 +176,67 @@
     let lastSubmitTime = 0;
 
     form.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      // 【スパム対策（ハニーポット）】
-      const honeypot = document.getElementById('website_hp').value;
-      if (honeypot) {
-        console.warn("Spam detected.");
-        return; 
-      }
-
-      // 【メールアドレスの厳密チェック】
+        e.preventDefault();
+      
+        // スパム対策（ハニーポット）
+        const honeypot = document.getElementById('website_hp').value;
+        if (honeypot) {
+          console.warn('Spam detected.');
+          return;
+        }
+      
+        // URL確認
+        if (!GAS_URL || GAS_URL.trim() === '') {
+          alert('GASのURLが設定されていません。');
+          return;
+        }
+      
+        // 入力値を取得
+        const nameValue = document.getElementById('name').value.trim();
         const emailValue = document.getElementById('email').value.trim();
+        const contentValue = document.getElementById('content').value.trim();
+      
+        // 名前と問い合わせ内容の必須チェック
+        if (!nameValue || !contentValue) {
+          formStatus.style.color = '#e74c3c';
+          formStatus.innerText = 'お名前と問い合わせ内容を入力してください。';
+          return;
+        }
+      
+        // メールアドレスのチェック
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        
         if (!emailRegex.test(emailValue)) {
           formStatus.style.color = '#e74c3c';
           formStatus.innerText =
             '正しいメールアドレスの形式で入力してください（例: example@example.com）';
           return;
         }
-        
+      
+        // 連続送信対策
+        const now = Date.now();
+        if (now - lastSubmitTime < 5000) {
+          formStatus.style.color = '#e67e22';
+          formStatus.innerText =
+            '連続送信はできません。少し時間を置いてお試しください。';
+          return;
+        }
+      
+        // 送信直前に送信時刻を記録
+        lastSubmitTime = now;
+      
+        // ボタンを無効化
+        submitBtn.disabled = true;
+        submitBtn.innerText = '送信中...';
+        formStatus.innerText = '';
+      
+        // GASへ送るデータ
         const payload = {
-          name: document.getElementById('name').value.trim(),
+          name: nameValue,
           email: emailValue,
-          content: document.getElementById('content').value.trim()
+          content: contentValue
         };
-        
+      
+        // GASへ1回だけ送信
         fetch(GAS_URL, {
           method: 'POST',
           mode: 'no-cors',
@@ -209,61 +244,21 @@
         }).catch(error => {
           console.error('送信エラー:', error);
         });
+      
+        // 3秒後に送信完了画面へ切り替え
+        setTimeout(function () {
+          form.style.display = 'none';
+          messageContainer.style.display = 'none';
+          formTitle.style.display = 'none';
+          successCard.style.display = 'block';
+      
+          form.reset();
+          textarea.style.height = 'auto';
+          submitBtn.innerText = '送信';
+          submitBtn.disabled = false;
+        }, 3000);
+      });
 
-
-      // 【連続送信（連打）対策】前回送信から 5 秒以内は拒否
-      const now = Date.now();
-      if (now - lastSubmitTime < 5000) {
-        formStatus.style.color = "#e67e22";
-        formStatus.innerText = "連続送信はできません。少し時間を置いてお試しください。";
-        return;
-      }
-
-      // URL空欄チェック
-      if (!GAS_URL || GAS_URL.trim() === "") {
-        alert("GASのURLが設定されていません。");
-        return;
-      }
-
-      // ボタンを「送信中...」にして押せないように制御
-      submitBtn.disabled = true;
-      submitBtn.innerText = "送信中...";
-      formStatus.innerText = "";
-
-      const payload = {
-        name: document.getElementById('name').value.trim(),
-        email: emailValue,
-        content: document.getElementById('content').value.trim()
-      };
-
-
-      // バックグラウンドでGASへ送信実行
-      fetch(GAS_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          body: JSON.stringify(payload)
-        }).catch(error => {
-          console.error('送信エラー:', error);
-        });
-
-
-      // 3秒（3000ミリ秒）「送信中...」を表示させてから完了画面に切替
-      setTimeout(function() {
-        lastSubmitTime = Date.now();
-
-        // フォームを非表示にし、完了メッセージカードを表示
-        form.style.display = 'none';
-        messageContainer.style.display = 'none';
-        formTitle.style.display = 'none';
-        successCard.style.display = 'block';
-
-        // フォームリセット
-        form.reset();
-        textarea.style.height = 'auto';
-        submitBtn.innerText = "送信";
-        submitBtn.disabled = false;
-      }, 3000);
-    });
 
     // 「もう一度送信する」ボタンを押したときの復帰処理
     resetBtn.addEventListener('click', function() {
