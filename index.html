@@ -214,9 +214,11 @@
       formStatus.innerText = "";
 
       const payload = {
+        name: document.getElementById('name').value.trim(),
         email: emailValue,
-        content: document.getElementById('content').value
+        content: document.getElementById('content').value.trim()
       };
+
 
       // バックグラウンドでGASへ送信実行
       fetch(GAS_URL, {
